@@ -1,7 +1,7 @@
 <?php
 class Producto{
-    var $codigo;
-    var $nombre;
+    private string $codigo;
+    private string $nombre;
     int $stock;
     double $valorUnitario;
 
@@ -46,3 +46,5 @@ class Producto{
 }
 
 ?>
+
+
