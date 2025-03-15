@@ -9,6 +9,7 @@ class ProductosPorFactura {
     public function __construct(string $facturaNumero, string $productoCodigo, int $cantidad, float $subtotal) {
         $this->facturaNumero = $facturaNumero;
         $this->productoCodigo = $productoCodigo;
+        
         $this->cantidad = $cantidad;
         $this->subtotal = $subtotal;
     }
