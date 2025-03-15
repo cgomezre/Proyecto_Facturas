@@ -1,13 +1,13 @@
 <?php
 class ProductosPorFactura {
-    private int $id;
-    private string $facturaNumero; // FK a Factura
+    private int $codigo;
+    private string $facturaCodigo; // FK a Factura
     private string $productoCodigo; // FK a Producto
     private int $cantidad;
     private float $subtotal;
 
-    public function __construct(string $facturaNumero, string $productoCodigo, int $cantidad, float $subtotal) {
-        $this->facturaNumero = $facturaNumero;
+    public function __construct(string $facturaCodigo, string $productoCodigo, int $cantidad, float $subtotal) {
+        $this->facturaCodigo = $facturaCodigo;
         $this->productoCodigo = $productoCodigo;
         
         $this->cantidad = $cantidad;
@@ -15,12 +15,12 @@ class ProductosPorFactura {
     }
 
     // Métodos Getter
-    public function getId(): int {
-        return $this->id;
+    public function getCodigo(): int {
+        return $this->codigo;
     }
 
-    public function getFacturaNumero(): string {
-        return $this->facturaNumero;
+    public function getfacturaCodigo(): string {
+        return $this->facturaCodigo;
     }
 
     public function getProductoCodigo(): string {
@@ -36,8 +36,8 @@ class ProductosPorFactura {
     }
 
     // Métodos Setter
-    public function setFacturaNumero(string $facturaNumero): void {
-        $this->facturaNumero = $facturaNumero;
+    public function setfacturaCodigo(string $facturaCodigo): void {
+        $this->facturaCodigo = $facturaCodigo;
     }
 
     public function setProductoCodigo(string $productoCodigo): void {

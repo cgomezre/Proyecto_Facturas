@@ -1,13 +1,14 @@
 <?php
 include_once '../Control/CtrCliente.php';
-include_once '../Modelos/Cliente.php';
+include_once '../Modelo/Cliente.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $codigo = $_POST["codigo"];
     $credito = $_POST["credito"];
+    $persona_codigo = $_POST["persona_codigo"];
     $accion = $_POST["accion"];
 
-    $cliente = new Cliente($codigo, $credito);
+    $cliente = new Cliente($codigo, $credito, $persona_codigo);
     $ctrCliente = new CtrCliente($cliente);
 
     switch ($accion) {
@@ -30,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <form method="post">
     Código: <input type="text" name="codigo" required>
     Crédito: <input type="number" name="credito" step="0.01">
+    Código persona: <input type="text" name="persona_codigo">
     <button type="submit" name="accion" value="Guardar">Guardar</button>
     <button type="submit" name="accion" value="Consultar">Consultar</button>
     <button type="submit" name="accion" value="Modificar">Modificar</button>

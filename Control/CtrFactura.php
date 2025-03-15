@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-include_once '../Modelos/Factura.php';
+include_once '../Modelo/Factura.php';
 
 class CtrFactura {
     private $conexion;
@@ -13,7 +13,7 @@ class CtrFactura {
 
     // 🔹 **Validar Datos Antes de Insertar o Modificar**
     private function validarDatos() {
-        if (empty($this->objFactura->getNumero()) || empty($this->objFactura->getFecha()) || empty($this->objFactura->getCodigoCliente()) || empty($this->objFactura->getCodigoVendedor()) || empty($this->objFactura->getCodigoEmpresa())) {
+        if (empty($this->objFactura->getCodigo()) || empty($this->objFactura->getFecha()) || empty($this->objFactura->getCodigoCliente()) || empty($this->objFactura->getCodigoVendedor()) || empty($this->objFactura->getCodigoEmpresa())) {
             throw new Exception("Error: Todos los campos son obligatorios.");
         }
         if ($this->objFactura->getTotal() < 0) {
@@ -25,16 +25,15 @@ class CtrFactura {
     public function guardar() {
         try {
             $this->validarDatos();
-            $sql = "INSERT INTO Factura (numero, fecha, total, cliente_codigo, vendedor_codigo, empresa_codigo, persona_codigo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO Factura (codigo, fecha, total, cliente_codigo, vendedor_codigo, empresa_codigo) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bind_param("isdssss",
-                $this->objFactura->getNumero(),
+            $stmt->bind_param("isdsss",
+                $this->objFactura->getCodigo(),
                 $this->objFactura->getFecha(),
                 $this->objFactura->getTotal(),
                 $this->objFactura->getCodigoCliente(),
                 $this->objFactura->getCodigoVendedor(),
-                $this->objFactura->getCodigoEmpresa(),
-                $this->objFactura->getCodigoPersona()
+                $this->objFactura->getCodigoEmpresa()
             );
             $stmt->execute();
             return "Factura guardada correctamente.";
@@ -46,9 +45,9 @@ class CtrFactura {
     // 🔹 **Consultar Factura**
     public function consultar() {
         try {
-            $sql = "SELECT * FROM Factura WHERE numero = ?";
+            $sql = "SELECT * FROM Factura WHERE codigo = ?";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bind_param("i", $this->objFactura->getNumero());
+            $stmt->bind_param("i", $this->objFactura->getCodigo());
             $stmt->execute();
             $resultado = $stmt->get_result();
 
@@ -58,7 +57,6 @@ class CtrFactura {
                 $this->objFactura->setCodigoCliente($row['cliente_codigo']);
                 $this->objFactura->setCodigoVendedor($row['vendedor_codigo']);
                 $this->objFactura->setCodigoEmpresa($row['empresa_codigo']);
-                $this->objFactura->setCodigoPersona($row['persona_codigo']);
             } else {
                 throw new Exception("Factura no encontrada.");
             }
@@ -72,7 +70,7 @@ class CtrFactura {
     public function modificar() {
         try {
             $this->validarDatos();
-            $sql = "UPDATE Factura SET fecha = ?, total = ?, cliente_codigo = ?, vendedor_codigo = ?, empresa_codigo = ?, persona_codigo = ? WHERE numero = ?";
+            $sql = "UPDATE Factura SET fecha = ?, total = ?, cliente_codigo = ?, vendedor_codigo = ?, empresa_codigo = ? WHERE codigo = ?";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bind_param("sdssssi",
                 $this->objFactura->getFecha(),
@@ -80,8 +78,7 @@ class CtrFactura {
                 $this->objFactura->getCodigoCliente(),
                 $this->objFactura->getCodigoVendedor(),
                 $this->objFactura->getCodigoEmpresa(),
-                $this->objFactura->getCodigoPersona(),
-                $this->objFactura->getNumero()
+                $this->objFactura->getCodigo()
             );
             $stmt->execute();
             return "Factura modificada correctamente.";
@@ -93,9 +90,9 @@ class CtrFactura {
     // 🔹 **Eliminar Factura**
     public function borrar() {
         try {
-            $sql = "DELETE FROM Factura WHERE numero = ?";
+            $sql = "DELETE FROM Factura WHERE codigo = ?";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bind_param("i", $this->objFactura->getNumero());
+            $stmt->bind_param("i", $this->objFactura->getCodigo());
             if (!$stmt->execute()) {
                 throw new Exception("Error al eliminar la factura.");
             }

@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-include_once '../Modelos/Empresa.php';
+include_once '../Modelo/Empresa.php';
 
 class CtrEmpresa {
     private $conexion;
@@ -20,8 +20,8 @@ class CtrEmpresa {
 
             $sql = "INSERT INTO Empresa (codigo, nombre) VALUES (?, ?)";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bind_param("ss", 
-                $this->objEmpresa->getCodigo(), 
+            $stmt->bind_param("ss",
+                $this->objEmpresa->getCodigo(),
                 $this->objEmpresa->getNombre()
             );
             $stmt->execute();

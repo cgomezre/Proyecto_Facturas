@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-include_once '../Modelos/Cliente.php';
+include_once '../Modelo/Cliente.php';
 
 class CtrCliente {
     private $conexion;
@@ -13,8 +13,8 @@ class CtrCliente {
 
     // 🔹 **Validación antes de Insertar**
     private function validarDatos() {
-        if (empty($this->objCliente->getCodigo()) || empty($this->objCliente->getCredito())) {
-            throw new Exception("Error: Código y Crédito son obligatorios.");
+        if (empty($this->objCliente->getCodigo()) || empty($this->objCliente->getCredito()) || empty($this->objCliente->getPersonaCodigo())) {
+            throw new Exception("Error: Código, Crédito y Codigo persona son obligatorios.");
         }
         if ($this->objCliente->getCredito() < 0) {
             throw new Exception("Error: El crédito no puede ser negativo.");
@@ -25,9 +25,9 @@ class CtrCliente {
     public function guardar() {
         try {
             $this->validarDatos();
-            $sql = "INSERT INTO Cliente (codigo, credito) VALUES (?, ?)";
+            $sql = "INSERT INTO Cliente (codigo, credito, persona_codigo) VALUES (?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
-            $stmt->bind_param("sd", $this->objCliente->getCodigo(), $this->objCliente->getCredito());
+            $stmt->bind_param("sds", $this->objCliente->getCodigo(), $this->objCliente->getCredito(), $this->objCliente->getPersonaCodigo());
             $stmt->execute();
             return true;
         } catch (Exception $e) {
@@ -51,6 +51,24 @@ class CtrCliente {
             return $this->objCliente;
         } catch (Exception $e) {
             return "Error al consultar cliente: " . $e->getMessage();
+        }
+    }
+
+    // 🔹 **Modificar Cliente**
+    public function modificar() {
+        try {
+            $this->validarDatos();
+            $sql = "UPDATE Cliente SET credito = ?, persona_codigo = ? WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("dss", 
+                $this->objCliente->getCredito(),
+                $this->objCliente->getPersonaCodigo(),
+                $this->objCliente->getCodigo()
+            );
+            $stmt->execute();
+            return "Cliente modificado correctamente.";
+        } catch (Exception $e) {
+            return "Error al modificar cliente: " . $e->getMessage();
         }
     }
 

@@ -1,34 +1,31 @@
 <?php
 class Factura {
-    private int $numero;
+    private int $codigo;
     private string $fecha;
     private float $total;
     private string $codigoCliente; // FK a Cliente
     private string $codigoVendedor; // FK a Vendedor
     private string $codigoEmpresa; // FK a Empresa
-    private string $codigoPersona; // FK a Persona
 
     public function __construct(
-        int $numero,
+        int $codigo,
         string $fecha,
         float $total,
         string $codigoCliente,
         string $codigoVendedor,
-        string $codigoEmpresa,
-        string $codigoPersona
+        string $codigoEmpresa
     ) {
-        $this->numero = $numero;
+        $this->codigo = $codigo;
         $this->fecha = $fecha;
         $this->total = $total;
         $this->codigoCliente = $codigoCliente;
         $this->codigoVendedor = $codigoVendedor;
         $this->codigoEmpresa = $codigoEmpresa;
-        $this->codigoPersona = $codigoPersona;
     }
 
     // Métodos Getter
-    public function getNumero(): int {
-        return $this->numero;
+    public function getCodigo(): int {
+        return $this->codigo;
     }
 
     public function getFecha(): string {
@@ -49,10 +46,6 @@ class Factura {
 
     public function getCodigoEmpresa(): string {
         return $this->codigoEmpresa;
-    }
-
-    public function getCodigoPersona(): string {
-        return $this->codigoPersona;
     }
 
     // Métodos Setter
@@ -76,9 +69,6 @@ class Factura {
         $this->codigoEmpresa = $codigoEmpresa;
     }
 
-    public function setCodigoPersona(string $codigoPersona): void {
-        $this->codigoPersona = $codigoPersona;
-    }
 }
 ?>
 

@@ -4,10 +4,11 @@ class Vendedor {
     private int $carnet;
     private string $direccion;
 
-    public function __construct(string $codigo, int $carnet, string $direccion) {
+    public function __construct(string $codigo, int $carnet, string $direccion, string $persona_codigo) {
         $this->codigo = $codigo;
         $this->carnet = $carnet;
         $this->direccion = $direccion;
+        $this->persona_codigo = $persona_codigo;
     }
 
     // Métodos Getter
@@ -23,6 +24,10 @@ class Vendedor {
         return $this->direccion;
     }
 
+    public function getPersonaCodigo(): string {
+        return $this->persona_codigo;
+    }
+
     // Métodos Setter
     public function setCodigo(string $codigo): void {
         $this->codigo = $codigo;
@@ -34,6 +39,10 @@ class Vendedor {
 
     public function setDireccion(string $direccion): void {
         $this->direccion = $direccion;
+    }
+
+    public function setPersonaCodigo(string $persona_codigo): void {
+        $this->persona_codigo = $persona_codigo;
     }
 }
 ?>

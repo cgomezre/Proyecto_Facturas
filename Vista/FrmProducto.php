@@ -1,6 +1,6 @@
 <?php
 include_once '../Control/CtrProducto.php';
-include_once '../Modelos/Producto.php';
+include_once '../Modelo/Producto.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $codigo = $_POST["codigo"];

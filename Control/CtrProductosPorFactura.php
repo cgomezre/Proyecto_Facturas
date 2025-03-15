@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-include_once '../Modelos/ProductosPorFactura.php';
+include_once '../Modelo/ProductosPorFactura.php';
 
 class CtrProductosPorFactura {
     private $conexion;
@@ -25,10 +25,10 @@ class CtrProductosPorFactura {
     public function guardar() {
         try {
             $this->validarDatos();
-            $sql = "INSERT INTO ProductosPorFactura (factura_numero, producto_codigo, cantidad, subtotal) VALUES (?, ?, ?, ?)";
+            $sql = "INSERT INTO ProductosPorFactura (factura_codigo, producto_codigo, cantidad, subtotal) VALUES (?, ?, ?, ?)";
             $stmt = $this->conexion->prepare($sql);
             $stmt->bind_param("isid", 
-                $this->objProductosPorFactura->getFacturaNumero(), 
+                $this->objProductosPorFactura->getfacturaCodigo(), 
                 $this->objProductosPorFactura->getProductoCodigo(), 
                 $this->objProductosPorFactura->getCantidad(), 
                 $this->objProductosPorFactura->getSubtotal()

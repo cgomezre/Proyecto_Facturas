@@ -1,15 +1,15 @@
 <?php
 include_once '../Control/CtrProductosPorFactura.php';
-include_once '../Modelos/ProductosPorFactura.php';
+include_once '../Modelo/ProductosPorFactura.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $facturaNumero = $_POST["facturaNumero"];
+    $facturaCodigo = $_POST["facturaCodigo"];
     $productoCodigo = $_POST["productoCodigo"];
     $cantidad = $_POST["cantidad"];
     $subtotal = $_POST["subtotal"];
     $accion = $_POST["accion"];
 
-    $productosPorFactura = new ProductosPorFactura($facturaNumero, $productoCodigo, $cantidad, $subtotal);
+    $productosPorFactura = new ProductosPorFactura($facturaCodigo, $productoCodigo, $cantidad, $subtotal);
     $ctrProductosPorFactura = new CtrProductosPorFactura($productosPorFactura);
 
     switch ($accion) {
@@ -17,20 +17,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo $ctrProductosPorFactura->guardar();
             break;
         case "Consultar":
-            print_r($ctrProductosPorFactura->obtenerPorFactura($facturaNumero));
+            print_r($ctrProductosPorFactura->obtenerPorFactura($facturaCodigo));
             break;
         case "Modificar":
-            echo $ctrProductosPorFactura->actualizarCantidad($facturaNumero, $productoCodigo, $cantidad, $subtotal);
+            echo $ctrProductosPorFactura->actualizarCantidad($facturaCodigo, $productoCodigo, $cantidad, $subtotal);
             break;
         case "Eliminar":
-            echo $ctrProductosPorFactura->borrar($facturaNumero, $productoCodigo);
+            echo $ctrProductosPorFactura->borrar($facturaCodigo, $productoCodigo);
             break;
     }
 }
 ?>
 
 <form method="post">
-    Número de Factura: <input type="number" name="facturaNumero" required>
+    Número de Factura asociada: <input type="number" name="facturaCodigo" required>
     Código del Producto: <input type="text" name="productoCodigo" required>
     Cantidad: <input type="number" name="cantidad" min="1" required>
     Subtotal: <input type="number" name="subtotal" step="0.01" required>

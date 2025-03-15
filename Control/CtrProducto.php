@@ -1,6 +1,6 @@
 <?php
 include_once 'conexion.php';
-include_once '../Modelos/Producto.php';
+include_once '../Modelo/Producto.php';
 
 class CtrProducto {
     private $conexion;

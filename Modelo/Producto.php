@@ -2,8 +2,8 @@
 class Producto{
     private string $codigo;
     private string $nombre;
-    int $stock;
-    double $valorUnitario;
+    private int $stock;
+    private float $valorUnitario;
 
     function __construct($codigo, $nombre, $stock, $valorUnitario){
         $this->codigo = $codigo;
