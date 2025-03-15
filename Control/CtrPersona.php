@@ -1,6 +1,9 @@
 <?php
-include_once 'conexion.php';
-include_once '../Modelos/Persona.php';
+
+require_once __DIR__ . '/../Control/Conexion.php';
+include_once __DIR__ . '/../Modelo/Persona.php'; 
+
+
 
 class CtrPersona {
     private $conexion;
@@ -27,7 +30,7 @@ class CtrPersona {
                 $this->objPersona->getTelefono()
             );
             $stmt->execute();
-            return true;
+            return "Persona guardada correctamente.";
         } catch (Exception $e) {
             return "Error al guardar persona: " . $e->getMessage();
         }
@@ -52,6 +55,39 @@ class CtrPersona {
             return $this->objPersona;
         } catch (Exception $e) {
             return "Error al consultar persona: " . $e->getMessage();
+        }
+    }
+
+    // 🔹 **Modificar Persona**
+    public function modificar() {
+        try {
+            $sql = "UPDATE Persona SET email = ?, nombre = ?, telefono = ? WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("ssss", 
+                $this->objPersona->getEmail(),
+                $this->objPersona->getNombre(),
+                $this->objPersona->getTelefono(),
+                $this->objPersona->getCodigo()
+            );
+            $stmt->execute();
+            return "Persona modificada correctamente.";
+        } catch (Exception $e) {
+            return "Error al modificar persona: " . $e->getMessage();
+        }
+    }
+
+    // 🔹 **Eliminar Persona**
+    public function borrar() {
+        try {
+            $sql = "DELETE FROM Persona WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("s", $this->objPersona->getCodigo());
+            if (!$stmt->execute()) {
+                throw new Exception("Error al eliminar la persona.");
+            }
+            return "Persona eliminada correctamente.";
+        } catch (Exception $e) {
+            return "Error al eliminar persona: " . $e->getMessage();
         }
     }
 }

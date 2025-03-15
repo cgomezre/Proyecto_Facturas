@@ -1,6 +1,9 @@
 <?php
-include_once '../Control/CtrPersona.php';
-include_once '../Modelos/Persona.php';
+
+include_once __DIR__ . '/../Control/conexion.php';
+include_once __DIR__ . '/../Modelo/Persona.php';
+include_once __DIR__ . '/../Control/CtrPersona.php';
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $codigo = $_POST["codigo"];
