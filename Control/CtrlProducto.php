@@ -4,32 +4,54 @@ include_once '../Modelos/Producto.php';
 
 class CtrProducto {
     private $conexion;
+    private $objProducto;
 
-    public function __construct() {
+    public function __construct(Producto $objProducto) {
         $this->conexion = Conexion::conectar();
+        $this->objProducto = $objProducto;
     }
 
-    // Agregar Producto
-    public function agregarProducto(Producto $producto) {
-        $sql = "INSERT INTO Producto (codigo, nombre, stock, valorUnitario) VALUES (?, ?, ?, ?)";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ssdi", $producto->getCodigo(), $producto->getNombre(), $producto->getStock(), $producto->getValorUnitario());
-        return $stmt->execute();
+    // 🔹 **Validación de Datos**
+    private function validarDatos() {
+        if (empty($this->objProducto->getCodigo()) || empty($this->objProducto->getNombre()) || $this->objProducto->getStock() < 0 || $this->objProducto->getValorUnitario() < 0) {
+            throw new Exception("Error: Datos inválidos. Verifique stock y precio.");
+        }
     }
 
-    // Obtener todos los productos
-    public function obtenerProductos() {
-        $sql = "SELECT * FROM Producto";
-        $resultado = $this->conexion->query($sql);
-        return $resultado->fetch_all(MYSQLI_ASSOC);
+    // 🔹 **Guardar Producto**
+    public function guardar() {
+        try {
+            $this->validarDatos();
+            $sql = "INSERT INTO Producto (codigo, nombre, stock, valorUnitario) VALUES (?, ?, ?, ?)";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("ssdi", 
+                $this->objProducto->getCodigo(), 
+                $this->objProducto->getNombre(), 
+                $this->objProducto->getStock(), 
+                $this->objProducto->getValorUnitario()
+            );
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return "Error al guardar producto: " . $e->getMessage();
+        }
     }
 
-    // Actualizar Stock
-    public function actualizarStock($codigo, $nuevoStock) {
-        $sql = "UPDATE Producto SET stock = ? WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("is", $nuevoStock, $codigo);
-        return $stmt->execute();
+    // 🔹 **Actualizar Stock con Validación**
+    public function actualizarStock($nuevoStock) {
+        try {
+            if ($nuevoStock < 0) {
+                throw new Exception("El stock no puede ser negativo.");
+            }
+            $sql = "UPDATE Producto SET stock = ? WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("is", $nuevoStock, $this->objProducto->getCodigo());
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return "Error al actualizar stock: " . $e->getMessage();
+        }
     }
 }
 ?>
+

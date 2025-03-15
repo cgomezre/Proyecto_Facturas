@@ -11,54 +11,49 @@ class CtrPersona {
         $this->objPersona = $objPersona;
     }
 
-    // Crear Persona
+    // 🔹 **Guardar Persona**
     public function guardar() {
-        $sql = "INSERT INTO Persona (codigo, email, nombre, telefono) VALUES (?, ?, ?, ?)";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ssss", 
-            $this->objPersona->getCodigo(), 
-            $this->objPersona->getEmail(), 
-            $this->objPersona->getNombre(), 
-            $this->objPersona->getTelefono()
-        );
-        return $stmt->execute();
-    }
+        try {
+            if (empty($this->objPersona->getCodigo()) || empty($this->objPersona->getNombre())) {
+                throw new Exception("El código y el nombre son obligatorios.");
+            }
 
-    // Consultar Persona
-    public function consultar() {
-        $sql = "SELECT * FROM Persona WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->objPersona->getCodigo());
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        if ($row = $resultado->fetch_assoc()) {
-            $this->objPersona->setEmail($row['email']);
-            $this->objPersona->setNombre($row['nombre']);
-            $this->objPersona->setTelefono($row['telefono']);
+            $sql = "INSERT INTO Persona (codigo, email, nombre, telefono) VALUES (?, ?, ?, ?)";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("ssss",
+                $this->objPersona->getCodigo(),
+                $this->objPersona->getEmail(),
+                $this->objPersona->getNombre(),
+                $this->objPersona->getTelefono()
+            );
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return "Error al guardar persona: " . $e->getMessage();
         }
-        return $this->objPersona;
     }
 
-    // Modificar Persona
-    public function modificar() {
-        $sql = "UPDATE Persona SET email = ?, nombre = ?, telefono = ? WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ssss", 
-            $this->objPersona->getEmail(), 
-            $this->objPersona->getNombre(), 
-            $this->objPersona->getTelefono(), 
-            $this->objPersona->getCodigo()
-        );
-        return $stmt->execute();
-    }
+    // 🔹 **Consultar Persona**
+    public function consultar() {
+        try {
+            $sql = "SELECT * FROM Persona WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("s", $this->objPersona->getCodigo());
+            $stmt->execute();
+            $resultado = $stmt->get_result();
 
-    // Eliminar Persona
-    public function borrar() {
-        $sql = "DELETE FROM Persona WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->objPersona->getCodigo());
-        return $stmt->execute();
+            if ($row = $resultado->fetch_assoc()) {
+                $this->objPersona->setEmail($row['email']);
+                $this->objPersona->setNombre($row['nombre']);
+                $this->objPersona->setTelefono($row['telefono']);
+            } else {
+                throw new Exception("Persona no encontrada.");
+            }
+            return $this->objPersona;
+        } catch (Exception $e) {
+            return "Error al consultar persona: " . $e->getMessage();
+        }
     }
 }
 ?>
+

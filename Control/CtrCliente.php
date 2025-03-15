@@ -4,49 +4,70 @@ include_once '../Modelos/Cliente.php';
 
 class CtrCliente {
     private $conexion;
+    private $objCliente;
 
-    public function __construct() {
+    public function __construct(Cliente $objCliente) {
         $this->conexion = Conexion::conectar();
+        $this->objCliente = $objCliente;
     }
 
-    // Crear Cliente
-    public function agregarCliente(Cliente $cliente) {
-        $sql = "INSERT INTO Cliente (codigo, credito) VALUES (?, ?)";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("sd", $cliente->getCodigo(), $cliente->getCredito());
-        return $stmt->execute();
+    // 🔹 **Validación antes de Insertar**
+    private function validarDatos() {
+        if (empty($this->objCliente->getCodigo()) || empty($this->objCliente->getCredito())) {
+            throw new Exception("Error: Código y Crédito son obligatorios.");
+        }
+        if ($this->objCliente->getCredito() < 0) {
+            throw new Exception("Error: El crédito no puede ser negativo.");
+        }
     }
 
-    // Obtener todos los clientes
-    public function obtenerClientes() {
-        $sql = "SELECT * FROM Cliente";
-        $resultado = $this->conexion->query($sql);
-        return $resultado->fetch_all(MYSQLI_ASSOC);
+    // 🔹 **Guardar Cliente**
+    public function guardar() {
+        try {
+            $this->validarDatos();
+            $sql = "INSERT INTO Cliente (codigo, credito) VALUES (?, ?)";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("sd", $this->objCliente->getCodigo(), $this->objCliente->getCredito());
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return "Error al guardar cliente: " . $e->getMessage();
+        }
     }
 
-    // Obtener un cliente por código
-    public function obtenerClientePorCodigo($codigo) {
-        $sql = "SELECT * FROM Cliente WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $codigo);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+    // 🔹 **Consultar Cliente**
+    public function consultar() {
+        try {
+            $sql = "SELECT * FROM Cliente WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("s", $this->objCliente->getCodigo());
+            $stmt->execute();
+            $resultado = $stmt->get_result();
+            if ($row = $resultado->fetch_assoc()) {
+                $this->objCliente->setCredito($row['credito']);
+            } else {
+                throw new Exception("Cliente no encontrado.");
+            }
+            return $this->objCliente;
+        } catch (Exception $e) {
+            return "Error al consultar cliente: " . $e->getMessage();
+        }
     }
 
-    // Actualizar Cliente
-    public function actualizarCliente(Cliente $cliente) {
-        $sql = "UPDATE Cliente SET credito = ? WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ds", $cliente->getCredito(), $cliente->getCodigo());
-        return $stmt->execute();
-    }
-
-    // Eliminar Cliente
-    public function eliminarCliente($codigo) {
-        $sql = "DELETE FROM Cliente WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $codigo);
-        return $stmt->execute();
+    // 🔹 **Eliminar Cliente con Validación**
+    public function borrar() {
+        try {
+            $sql = "DELETE FROM Cliente WHERE codigo = ?";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("s", $this->objCliente->getCodigo());
+            if (!$stmt->execute()) {
+                throw new Exception("Error al eliminar el cliente.");
+            }
+            return true;
+        } catch (Exception $e) {
+            return "Error al eliminar cliente: " . $e->getMessage();
+        }
     }
 }
 ?>
+

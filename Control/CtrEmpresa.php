@@ -11,48 +11,25 @@ class CtrEmpresa {
         $this->objEmpresa = $objEmpresa;
     }
 
-    // Crear Empresa
+    // 🔹 **Guardar Empresa**
     public function guardar() {
-        $sql = "INSERT INTO Empresa (codigo, nombre) VALUES (?, ?)";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ss", 
-            $this->objEmpresa->getCodigo(), 
-            $this->objEmpresa->getNombre()
-        );
-        return $stmt->execute();
-    }
+        try {
+            if (empty($this->objEmpresa->getCodigo()) || empty($this->objEmpresa->getNombre())) {
+                throw new Exception("Código y nombre son obligatorios.");
+            }
 
-    // Consultar Empresa
-    public function consultar() {
-        $sql = "SELECT * FROM Empresa WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->objEmpresa->getCodigo());
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        if ($row = $resultado->fetch_assoc()) {
-            $this->objEmpresa->setNombre($row['nombre']);
+            $sql = "INSERT INTO Empresa (codigo, nombre) VALUES (?, ?)";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("ss", 
+                $this->objEmpresa->getCodigo(), 
+                $this->objEmpresa->getNombre()
+            );
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return "Error al guardar empresa: " . $e->getMessage();
         }
-        return $this->objEmpresa;
-    }
-
-    // Modificar Empresa
-    public function modificar() {
-        $sql = "UPDATE Empresa SET nombre = ? WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("ss", 
-            $this->objEmpresa->getNombre(), 
-            $this->objEmpresa->getCodigo()
-        );
-        return $stmt->execute();
-    }
-
-    // Eliminar Empresa
-    public function borrar() {
-        $sql = "DELETE FROM Empresa WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->objEmpresa->getCodigo());
-        return $stmt->execute();
     }
 }
 ?>
+

@@ -11,51 +11,26 @@ class CtrVendedor {
         $this->objVendedor = $objVendedor;
     }
 
-    // Crear Vendedor
+    // 🔹 **Guardar Vendedor**
     public function guardar() {
-        $sql = "INSERT INTO Vendedor (codigo, carnet, direccion) VALUES (?, ?, ?)";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("sis", 
-            $this->objVendedor->getCodigo(), 
-            $this->objVendedor->getCarnet(), 
-            $this->objVendedor->getDireccion()
-        );
-        return $stmt->execute();
-    }
+        try {
+            if (empty($this->objVendedor->getCodigo()) || empty($this->objVendedor->getCarnet()) || empty($this->objVendedor->getDireccion())) {
+                throw new Exception("Todos los campos son obligatorios.");
+            }
 
-    // Consultar Vendedor
-    public function consultar() {
-        $sql = "SELECT * FROM Vendedor WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->objVendedor->getCodigo());
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-
-        if ($row = $resultado->fetch_assoc()) {
-            $this->objVendedor->setCarnet($row['carnet']);
-            $this->objVendedor->setDireccion($row['direccion']);
+            $sql = "INSERT INTO Vendedor (codigo, carnet, direccion) VALUES (?, ?, ?)";
+            $stmt = $this->conexion->prepare($sql);
+            $stmt->bind_param("sis",
+                $this->objVendedor->getCodigo(),
+                $this->objVendedor->getCarnet(),
+                $this->objVendedor->getDireccion()
+            );
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            return "Error al guardar vendedor: " . $e->getMessage();
         }
-        return $this->objVendedor;
-    }
-
-    // Modificar Vendedor
-    public function modificar() {
-        $sql = "UPDATE Vendedor SET carnet = ?, direccion = ? WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("iss", 
-            $this->objVendedor->getCarnet(), 
-            $this->objVendedor->getDireccion(), 
-            $this->objVendedor->getCodigo()
-        );
-        return $stmt->execute();
-    }
-
-    // Eliminar Vendedor
-    public function borrar() {
-        $sql = "DELETE FROM Vendedor WHERE codigo = ?";
-        $stmt = $this->conexion->prepare($sql);
-        $stmt->bind_param("s", $this->objVendedor->getCodigo());
-        return $stmt->execute();
     }
 }
 ?>
+
